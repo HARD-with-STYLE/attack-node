@@ -1,20 +1,21 @@
 {
     "global":{
-        "processNumber": 12,
-        "thread": 800,
-        "delay": 1,
-        "maxMemory": 200,
-        "time": 60,
+        "processNumber": 1,
+        "thread": 20,
+        "delay": 10,
+        "maxMemory": -1,
+        "time": -1,
+        "status": false,
         "log": {
             "log": false,
             "level": 3
         }
     },
     "stream": [{
-        "url": "http://aiqipaiapp27.cn/2017.php",
+        "url": "http://1.1.1.1",
         "check": "",
-        "method": "POST",
-        "referer": "http://aiqipaiapp27.cn/",
-        "data": "u=${random.qq()}&p=${random.string(12)}&tijiao=%E6%8F%90%CD%8F%CD%8F%CD%8F%CD%8F%E4%BA%A4"
+        "method": "GET",
+        "referer": "",
+        "data": ""
     }]
 }

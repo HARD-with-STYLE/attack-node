@@ -10,6 +10,7 @@ let test = JSON.stringify({
         thread: 1,
         delay: 500,
         maxMemory: 120,
+        status: true,
         log: {
             log: false,
             level: 3

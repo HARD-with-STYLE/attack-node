@@ -5,9 +5,11 @@ const config = JSON.parse( fs.readFileSync( "./config.json" ).toString() );
 const log = Number( config.global.log.level );
 let startTime = new Date().getTime();
 
-setTimeout( () => {
-    main_exit()
-}, config.global.time * 1000 );
+if(config.global.time > 0){
+    setTimeout( () => {
+        main_exit()
+    }, config.global.time * 1000 );
+}
 
 const logger = ( type, title, msg ) => {
     let time = new Date();
@@ -28,13 +30,19 @@ const logger = ( type, title, msg ) => {
     }
 
     if ( config.global.log.log ) {
+        try {
+            fs.statSync("./log")
+        } catch (error) {
+            fs.mkdirSync("./log");
+        }
+        
         let t = new Date();
         let date = `${t.getFullYear()}-${t.getMonth()}-${t.getDay()}`;
 
         if ( !fs.existsSync( `./log/log-${date}.log` ) ) {
             fs.writeFileSync( `./log/log-${date}.log`, `` );
         }
-        let data = fs.readFileSync( `./log-${date}.log` );
+        let data = fs.readFileSync( `./log/log-${date}.log` );
         fs.writeFileSync( `./log/log-${date}.log`, `${data}\n[${time}][${title}] ${msg}` );
     }
 }
@@ -65,6 +73,7 @@ let total = {
     fail: 0
 };
 let codeList = new Object();
+let status;
 
 if ( config.global.processNumber == -1 ) {
     processNumber = os.cpus().length * 4;
@@ -72,7 +81,6 @@ if ( config.global.processNumber == -1 ) {
     processNumber = config.global.processNumber;
 }
 
-logger( "INFO", `[INFO][Process-Main]`, `Powered By 黑与白工作室` );
 logger( "INFO", `[INFO][Process-Main]`, `Starting...` );
 logger( "INFO", `[INFO][Process-Main]`, `Process: ${processNumber}` );
 logger( "INFO", `[INFO][Process-Main]`, `Maximum Concurrency: ${(1e3 / config.global.delay) * processNumber * config.stream.length * config.global.thread}` );
@@ -82,10 +90,26 @@ setInterval( () => {
         max_success = n_success;
     }
     logger( "INFO", `[INFO][Process-Main]`, `total: ${n_total}, fail: ${n_fail}, success: ${n_success}, max success: ${max_success}` );
+    if(config.global.status){
+        status.send({
+            type: "data",
+            data: {
+                total: n_total,
+                success: n_success,
+                fail: n_fail,
+                maxSuccess: max_success
+            }
+        })
+    }
+
     n_total = 0;
     n_fail = 0;
     n_success = 0;
 }, 1e3 );
+
+if(config.global.status){
+    status = child_process.fork("./statusWeb/app.js");
+}
 
 for ( let i = 0; i < processNumber; i++ ) {
     processes[ i ] = child_process.fork( './start.js' );
@@ -148,6 +172,9 @@ var processEvent = {
 }
 
 function main_exit() {
+    status.send({
+        type: "exit"
+    });
     processes.forEach( e => {
         e.send( [ "exit" ] );
     } )
@@ -160,8 +187,6 @@ function main_exit() {
 
     let t = new Date().getTime() - startTime;
     logger( "INFO", `[INFO][Process-Main]`, `${t/1000/60} min` );
-
-    logger( "INFO", `[INFO][Process-Main]`, `Powered By 黑与白工作室` );
     process.exit( 0 );
 }
 
