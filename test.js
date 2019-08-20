@@ -16,13 +16,13 @@ let test = JSON.stringify({
         }
     },
     stream: [{
-        url: "http://baidu.com/${random.number(6)}",
+        url: "http://1.1.1.1/${random.number(6)}",
         check: "",
         method: "GET",
         referer: "",
         data: ""
     },{
-        url: "http://baidu.com",
+        url: "http://1.1.1.1",
         check: "",
         method: "POST",
         referer: "",
