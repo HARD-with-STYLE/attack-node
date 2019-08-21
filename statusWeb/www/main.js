@@ -5,7 +5,13 @@ function getData(cb) {
             cb(data);
         })
     } ).catch( function ( err ) {
-        
+        cb({
+            total: NaN,
+            success: NaN,
+            fail: NaN,
+            maxSuccess: NaN,
+            process: NaN,
+        });
     } )
 }
 
@@ -14,11 +20,6 @@ line_data_total = new Array();
 line_data_success = new Array();
 line_data_fail = new Array();
 line_data_time = new Array();
-
-line_data_total = [0,0,0,0,0,0,0,0,0,0];
-line_data_success = [0,0,0,0,0,0,0,0,0,0];
-line_data_fail = [0,0,0,0,0,0,0,0,0,0];
-line_data_time = [0,0,0,0,0,0,0,0,0,0];
 
 window.onload = function () {
     charts.gauge_1 = echarts.init( document.getElementById( "gauge-1" ) );
@@ -29,7 +30,7 @@ window.onload = function () {
 
     setInterval(() => {
         updata();
-    }, 1e3);
+    }, 1000);
 }
 
 function now() {
@@ -38,7 +39,7 @@ function now() {
 }
 
 function draw() {
-    // 仪表盘 失败请求
+    // 仪表盘 存活进程数
     var option = {
         tooltip: {
             formatter: "{a} <br/>{b} : {c}/s"
@@ -46,13 +47,13 @@ function draw() {
         series: [ {
             name: '业务指标',
             type: 'gauge',
-            max: 5000,
+            max: 100,
             detail: {
-                formatter: '{value}/s'
+                formatter: '{value}'
             },
             data: [ {
                 value: 0,
-                name: '失败请求'
+                name: '存活进程数'
             } ]
         } ]
     };
@@ -127,17 +128,23 @@ function draw() {
             name: 'total',
             type: 'line',
             stack: '总量',
-            data: line_data_total
+            smooth: true,
+            data: line_data_total,
+            areaStyle: {}
         }, {
             name: 'success',
             type: 'line',
             stack: '总量',
-            data: line_data_success
+            smooth: true,
+            data: line_data_success,
+            areaStyle: {}
         }, {
             name: 'fail',
             type: 'line',
             stack: '总量',
-            data: line_data_fail
+            smooth: true,
+            data: line_data_fail,
+            areaStyle: {}
         } ]
     };
 
@@ -146,17 +153,17 @@ function draw() {
 
 function updata() {
     getData(function (data) {
-        // 仪表盘 失败请求
+        // 仪表盘 存活进程数
         var option = {
             series: [ {
                 type: 'gauge',
-                max: 5000,
+                max: 100,
                 detail: {
-                    formatter: '{value}/s'
+                    formatter: '{value}'
                 },
                 data: [ {
-                    value: data.fail,
-                    name: '失败请求'
+                    value: data.process,
+                    name: '存活进程数'
                 } ]
             } ]
         };
@@ -198,7 +205,7 @@ function updata() {
         line_data_fail.push(data.fail);
         line_data_time.push(now());
 
-        if(line_data_time.length > 10){
+        if(line_data_time.length > 60){
             line_data_total.shift()
             line_data_success.shift()
             line_data_fail.shift()
@@ -235,17 +242,23 @@ function updata() {
                 name: 'total',
                 type: 'line',
                 stack: '总量',
-                data: line_data_total
+                smooth: true,
+                data: line_data_total,
+                areaStyle: {}
             }, {
                 name: 'success',
                 type: 'line',
                 stack: '总量',
-                data: line_data_success
+                smooth: true,
+                data: line_data_success,
+                areaStyle: {}
             }, {
                 name: 'fail',
                 type: 'line',
                 stack: '总量',
-                data: line_data_fail
+                smooth: true,
+                data: line_data_fail,
+                areaStyle: {}
             } ]
         };
 

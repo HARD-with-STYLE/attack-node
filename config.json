@@ -1,9 +1,9 @@
 {
     "global":{
-        "processNumber": -1,
+        "processNumber": 12,
         "thread": 20,
         "delay": 10,
-        "maxMemory": 50,
+        "maxMemory": 20,
         "time": -1,
         "status": true,
         "log": {
@@ -22,6 +22,6 @@
         "check": "",
         "method": "POST",
         "referer": "",
-        "data": "u=${random.qq()}&p=${random.string(10)}&tijiao=%E6%8F%90%CD%8F%CD%8F%CD%8F%CD%8F%E4%BA%A4"
+        "data": ""
     }]
 }

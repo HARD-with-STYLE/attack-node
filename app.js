@@ -67,6 +67,7 @@ let n_fail = 0;
 let n_success = 0;
 let n_total = 0;
 let max_success = 0;
+let aliveProcess = 0;
 let total = {
     total: 0,
     success: 0,
@@ -97,7 +98,8 @@ setInterval( () => {
                 total: n_total,
                 success: n_success,
                 fail: n_fail,
-                maxSuccess: max_success
+                maxSuccess: max_success,
+                process: aliveProcess,
             }
         })
     }
@@ -113,6 +115,7 @@ if(config.global.status){
 
 for ( let i = 0; i < processNumber; i++ ) {
     processes[ i ] = child_process.fork( './start.js' );
+    aliveProcess++;
     processes[ i ].on( 'message', ( m ) => {
         processEvent.msg( i, m );
     } );
@@ -153,6 +156,7 @@ var processEvent = {
         }
     },
     exit: ( i, code ) => {
+        aliveProcess--;
         if ( code == 0 ) {
             logger( "WARN", `[WARN][Process-${i}]`, `exit ${code}` );
         } else {
@@ -160,6 +164,7 @@ var processEvent = {
         }
         if ( restart ) {
             processes[ i ] = child_process.fork( './start.js' );
+            aliveProcess++;
             processes[ i ].on( 'message', ( m ) => {
                 processEvent.msg( i, m );
             } );
