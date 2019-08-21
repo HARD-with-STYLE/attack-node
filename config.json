@@ -3,7 +3,7 @@
         "processNumber": 12,
         "thread": 20,
         "delay": 10,
-        "maxMemory": 20,
+        "maxMemory": 50,
         "time": -1,
         "status": true,
         "log": {
@@ -17,10 +17,9 @@
         }
     },
     "stream": [{
-        "ip": "1.1.1.1",
         "url": "http://1.1.1.1/",
         "check": "",
-        "method": "POST",
+        "method": "GET",
         "referer": "",
         "data": ""
     }]

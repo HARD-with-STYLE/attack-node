@@ -68,6 +68,13 @@ let n_success = 0;
 let n_total = 0;
 let max_success = 0;
 let aliveProcess = 0;
+let memory = new Array();
+let memoryAll = 0;
+let net = new Array();
+let netAll = {
+    in: 0,
+    out: 0
+}
 let total = {
     total: 0,
     success: 0,
@@ -90,7 +97,24 @@ setInterval( () => {
     if(n_success > max_success){
         max_success = n_success;
     }
-    logger( "INFO", `[INFO][Process-Main]`, `total: ${n_total}, fail: ${n_fail}, success: ${n_success}, max success: ${max_success}` );
+    
+    memoryAll = 0;
+    memory.forEach(e => {
+        memoryAll += e;
+    });
+    
+    netAll = {
+        in: 0,
+        out: 0
+    }
+    net.forEach(e => {
+        netAll.in += e.in;
+        netAll.out += e.out;
+    })
+    net = new Array();
+
+    logger( "INFO", `[INFO][Process-Main]`, `total: ${n_total}, fail: ${n_fail}, success: ${n_success}, max success: ${max_success}, in: ${netAll.in.toFixed(2)}, out: ${netAll.out.toFixed(2)}` );
+
     if(config.global.status){
         status.send({
             type: "data",
@@ -100,6 +124,8 @@ setInterval( () => {
                 fail: n_fail,
                 maxSuccess: max_success,
                 process: aliveProcess,
+                memory: memoryAll,
+                net: netAll
             }
         })
     }
@@ -153,6 +179,14 @@ var processEvent = {
             }
         } else if ( type == "console" ) {
             logger( "INFO", `[INFO][Process-${i}]`, msg.data );
+        } else if ( type == "memory" ){
+            memory[i] = msg.data;
+        } else if ( type == "net" ){
+            net.push({
+                in: (msg.data.in / 1e3),
+                out: (msg.data.out / 1e3)
+            });
+            //console.log(i,msg.data);
         }
     },
     exit: ( i, code ) => {
@@ -177,9 +211,6 @@ var processEvent = {
 }
 
 function main_exit() {
-    status.send({
-        type: "exit"
-    });
     processes.forEach( e => {
         e.send( [ "exit" ] );
     } )

@@ -6,7 +6,26 @@ const thread = Number( config.global.thread );
 const maxMemory = Number( config.global.maxMemory );
 const delay = Number( config.global.delay );
 const proxy = config.global.proxy;
+let net_in = 0;
+let net_out = 0;
 let proxyList = new Array()
+
+setInterval(() => {
+    process.send({
+        type: "memory",
+        data: process.memoryUsage().heapUsed / 1048576
+    });
+    process.send({
+        type: "net",
+        data: {
+            in: net_in,
+            out: net_out
+        }
+    });
+
+    net_in = 0;
+    net_out = 0;
+}, 100);
 
 if(proxy.proxy){
     if(proxy.type == 0){
@@ -105,6 +124,15 @@ for ( let i = 0; i < thread; i++ ) {
                             data: [ err, code, body, uri ]
                         } );
                     }
+                },(socket) => {
+                    let timer = setInterval(() => {
+                        if(!socket.destroyed){
+                            net_in = socket.bytesRead - net_in;
+                            net_out = socket.bytesWritten - net_out;
+                        }else{
+                            clearInterval(timer);
+                        }
+                    }, 1000);
                 })
             }else{
                 http({
@@ -127,6 +155,15 @@ for ( let i = 0; i < thread; i++ ) {
                             data: [ err, code, body, uri ]
                         } );
                     }
+                },(socket) => {
+                    let timer = setInterval(() => {
+                        if(!socket.destroyed){
+                            net_in = socket.bytesRead;
+                            net_out = socket.bytesWritten;
+                        }else{
+                            clearInterval(timer);
+                        }
+                    }, 1000);
                 })
             }
         } );

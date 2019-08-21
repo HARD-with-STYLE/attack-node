@@ -11,7 +11,7 @@ const keepaliveAgent = new Agent( {
     freeSocketTimeout: 30000,
 } );
 
-const request = ( options, cb ) => {
+const request = ( options, cb , s) => {
     let url = options.url;
     let method = options.method.toUpperCase();
     let protocol = url.split( "/" )[ 0 ];
@@ -72,6 +72,10 @@ const request = ( options, cb ) => {
         } )
     } )
 
+    req.on("socket",(socket) => {
+        s(socket)
+    })
+
     if(method == "POST"){
         req.write(String(opti.data),(err) => {
             if(err){
@@ -83,7 +87,7 @@ const request = ( options, cb ) => {
     req.end()
 }
 
-const request_proxy = ( options, cb ) => {
+const request_proxy = ( options, cb ,s) => {
     let url = options.url;
     let method = options.method.toUpperCase();
     let hostname = url.split( "/" )[ 2 ];
@@ -116,6 +120,10 @@ const request_proxy = ( options, cb ) => {
             cb(null,[res.statusCode,data]);
         } )
     } )
+
+    req.on("socket",(socket) => {
+        s(socket)
+    })
 
     if(method == "POST"){
         req.write(String(opti.data),(err) => {
