@@ -22,7 +22,7 @@
 | - url | 请求链接，可以使用 [随机函数](#随机函数) | `String` | `true` |
 | - check | 与body部分匹配，用于检测是否成功 | `Regular`|  `true` |
 | - method | 请求方式，`POST` 或 `GET` | `String` | `true` |
-| - refere | 对应 `header` 中的 `refere` | `String` | `true` |
+| - referer | 对应 `header` 中的 `referer` | `String` | `true` |
 | - data | POST发送的数据，可以使用 [随机函数](#随机函数) | `String` | `false` |
 
 ## 随机函数
