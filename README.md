@@ -58,11 +58,13 @@
 ## Proxy
 目前只支持http请求，https有一些bug，只会返回statusCode，并且一直都是200
 
-# 返回值
+# 控制台输出
 - total: 每秒上报的请求数总和
 - fail：失败请求数
 - success：成功请求数
-- max success：最大并发数（只统计成功）
+- max_success：最大并发数（只统计成功）
+- in: 接收流量
+- out: 发送流量
 
 # 警告
 ## 进程数
