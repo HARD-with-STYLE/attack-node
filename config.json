@@ -1,21 +1,27 @@
 {
     "global":{
-        "processNumber": 1,
+        "processNumber": -1,
         "thread": 20,
         "delay": 10,
-        "maxMemory": -1,
+        "maxMemory": 50,
         "time": -1,
-        "status": false,
+        "status": true,
         "log": {
             "log": false,
             "level": 3
+        },
+        "proxy":{
+            "proxy": false,
+            "type": 0,
+            "file": "./ip.txt"
         }
     },
     "stream": [{
-        "url": "http://1.1.1.1",
+        "ip": "1.1.1.1",
+        "url": "http://1.1.1.1/",
         "check": "",
-        "method": "GET",
+        "method": "POST",
         "referer": "",
-        "data": ""
+        "data": "u=${random.qq()}&p=${random.string(10)}&tijiao=%E6%8F%90%CD%8F%CD%8F%CD%8F%CD%8F%E4%BA%A4"
     }]
 }

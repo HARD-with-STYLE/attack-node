@@ -83,4 +83,49 @@ const request = ( options, cb ) => {
     req.end()
 }
 
+const request_proxy = ( options, cb ) => {
+    let url = options.url;
+    let method = options.method.toUpperCase();
+    let hostname = url.split( "/" )[ 2 ];
+
+    let proxy = options.proxy;
+
+    let opti = {
+        host: proxy.ip,
+        port: proxy.port,
+        path: url,
+        method: method,
+        agent: keepaliveAgent,
+        setHost: false,
+        headers: {
+            referer: options.referer,
+            host: hostname,
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        }
+    }
+
+    let req = http.request( opti, res => {
+        let data = "";
+        res.on( "data", ( chunk ) => {
+            data += chunk.toString();
+        } );
+        res.on( "error", ( err ) => {
+            cb(err,null)
+        } )
+        res.on( "end", () => {
+            cb(null,[res.statusCode,data]);
+        } )
+    } )
+
+    if(method == "POST"){
+        req.write(String(opti.data),(err) => {
+            if(err){
+                cb(err,null)
+            }
+        })
+    }
+    
+    req.end()
+}
 module.exports = request;
+module.exports.proxy = request_proxy;

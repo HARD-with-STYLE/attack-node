@@ -1,29 +1,41 @@
 # 配置文件
 
-## global
-- processNumber：进程数量，填写 -1 进程数量为 CPU核心数x4
-- delay：每个请求的间隔时间（每个进程独立计算）
-- thread：线程数，具体请参考 [多线程](#多线程)
-- maxMemory：每个进程可以使用的最大内存，超过最大内存会自动重启，设置为 -1 将不会限制最大内存，单位MB
-- time：时长，单位秒，到时间后会自动停止
-- status：数据可视化，具体请参看 [数据可视化](#数据可视化)
-
-## Stream
-- url：请求的链接（可以使用随机函数）
-- check：填写正则表达式，与body部分匹配，用于检测是否成功
-- method：请求方式，填写POST或GET
-- referer：对应Header中的referer
-- data：POST提交的数据（可以使用随机函数）
+| Key | Value | Type | Required |
+| --- | ----- | ---- | --- |
+| global | 全局配置 | `Object` | `true` |
+| - processNumber| 进程数|`Int`| `true` |
+| - thread| 线程数|`Int`| `true` |
+| - delay| 每个请求的间隔时间|`Int`| `true` |
+| - maxMemory| 最大内存，单位MB|`Int`| `true` |
+| - time| 持续时间，单位秒|`Int`| `true` |
+| - status| 具体请查看 [数据可视化](#数据可视化)|`Boolen`| `true` |
+| - log | 日志配置 | `Object` | `true` |
+| - - log| 日志记录 | `Boolen` | `true` |
+| - - level | 日志输出等级 | `Int` | `true` |
+| - proxy| Proxy配置，具体查看 [Proxy](#Proxy) | `Object` | `true` |
+| - - proxy | 开启proxy | `Boolen` | `true` |
+| - - type | 类型， `0` 或 `1` | `Int` | `true` |
+| - - file| 指定一个文件，从文件中读取IP列表，当`type`为`0`时生效 | `String` | `false` |
+| - - list| Proxy列表，当`type`为`1`时生效 | `Array` | `false` |
+| Stream | 压测链路 | `Array` | `true` |
+| - ip | 指定IP | `String` | `false` |
+| - url | 请求链接，可以使用 [随机函数](#随机函数) | `String` | `true` |
+| - check | 与body部分匹配，用于检测是否成功 | `Regular`|  `true` |
+| - method | 请求方式，`POST` 或 `GET` | `String` | `true` |
+| - refere | 对应 `header` 中的 `refere` | `String` | `true` |
+| - data | POST发送的数据，可以使用 [随机函数](#随机函数) | `String` | `false` |
 
 ## 随机函数
 ### 格式
-- 全部修改为 ${random.xxx()} 
+- ${Function}
 ### 可用函数
-- random.qq() 随机QQ号
-- random.phone() 随机电话号码
-- random.number(长度) 随机指定长度的数字
-- random.string(长度) 随机指定长度的字符串
-- random.custom(自定义字符 , 长度) 从自定义字符中随机指定长度的字符（自定义字符串部分需要引号，在配置文件中需要使用 \ 进行转义
+| Function | Description |
+| --- | ---|
+| random.qq() | QQ |
+| random.phone() | 电话号码 |
+| random.number( `长度` ) | 指定长度的数字 |
+| random.string( `长度` ) | 指定长度的字符串 |
+| random.custom( `自定义字符` , `长度` ) | 从指定的字符中返回指定长度的字符串，自定义字符部分需要引号 |
 
 ### 添加自己的函数
 直接修改 `random.js` 即可
@@ -43,12 +55,14 @@
 ## 数据可视化
 此功能会在本地开一个Web服务器，端口为8123，直接在浏览器中打开 [http://localhost:8123/](#http://localhost:8123/) 就可以看到
 
+## Proxy
+目前只支持http请求，https有一些bug，只会返回statusCode，并且一直都是200
+
 # 返回值
 - total: 每秒上报的请求数总和
 - fail：失败请求数
 - success：成功请求数
 - max success：最大并发数（只统计成功）
-- ~~unknow：状态未知的返回（error为null且statusCode也为null）~~
 
 # 警告
 ## 进程数
