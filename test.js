@@ -14,6 +14,11 @@ let test = JSON.stringify({
         log: {
             log: false,
             level: 3
+        },
+        "proxy":{
+            "proxy": false,
+            "type": 0,
+            "file": "./ip.txt"
         }
     },
     stream: [{
