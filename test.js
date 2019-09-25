@@ -15,10 +15,10 @@ let test = JSON.stringify({
             log: false,
             level: 3
         },
-        "proxy":{
-            "proxy": false,
-            "type": 0,
-            "file": "./ip.txt"
+        proxy:{
+            proxy: false,
+            type: 0,
+            file: "./ip.txt"
         }
     },
     stream: [{
