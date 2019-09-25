@@ -36,6 +36,8 @@
 | random.number( `长度` ) | 指定长度的数字 |
 | random.string( `长度` ) | 指定长度的字符串 |
 | random.custom( `自定义字符` , `长度` ) | 从指定的字符中返回指定长度的字符串，自定义字符部分需要引号 |
+| random.time() | 时间戳 |
+| random.base64( `String` ) | 对内容进行Base64编码 |
 
 ### 添加自己的函数
 直接修改 `random.js` 即可

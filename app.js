@@ -140,14 +140,16 @@ if(config.global.status){
 }
 
 for ( let i = 0; i < processNumber; i++ ) {
-    processes[ i ] = child_process.fork( './start.js' );
-    aliveProcess++;
-    processes[ i ].on( 'message', ( m ) => {
-        processEvent.msg( i, m );
-    } );
-    processes[ i ].on( 'close', ( code ) => {
-        processEvent.exit( i, code );
-    } );
+    setTimeout(() => {
+        processes[ i ] = child_process.fork( './start.js' );
+        aliveProcess++;
+        processes[ i ].on( 'message', ( m ) => {
+            processEvent.msg( i, m );
+        } );
+        processes[ i ].on( 'close', ( code ) => {
+            processEvent.exit( i, code );
+        } );
+    }, i*50);
 }
 
 logger( "INFO", `[INFO][Process-Main]`, `Started!` );
@@ -175,7 +177,7 @@ var processEvent = {
             } else if ( code != null ) {
                 n_fail++;
                 total.fail++
-                logger( "WARN", `[WARN][Process-${i}]`, `Code: ${code}` );
+                logger( "DEBUG", `[WARN][Process-${i}]`, `Code: ${code}` );
             }
         } else if ( type == "console" ) {
             logger( "INFO", `[INFO][Process-${i}]`, msg.data );
@@ -186,13 +188,16 @@ var processEvent = {
                 in: (msg.data.in / 1e3),
                 out: (msg.data.out / 1e3)
             });
-            //console.log(i,msg.data);
+        } else if ( type == "error" ){
+            logger( "ERROR", `[ERROR][Process-${i}]`, `errno: ${msg.data.errno}, code: ${msg.data.code}, syscall: ${msg.data.syscall}` );
         }
     },
     exit: ( i, code ) => {
         aliveProcess--;
         if ( code == 0 ) {
             logger( "WARN", `[WARN][Process-${i}]`, `exit ${code}` );
+        } else if(code == 233) {
+            logger( "DEBUG", `[ERROR][Process-${i}]`, `exit` );
         } else {
             logger( "ERROR", `[ERROR][Process-${i}]`, `exit ${code}` );
         }
@@ -205,22 +210,16 @@ var processEvent = {
             processes[ i ].on( 'close', ( code ) => {
                 processEvent.exit( i, code );
             } );
-            logger( "INFO", `[INFO][Process-${i}]`, "restart" );
+            if(code == 233){
+                logger( "DEBUG", `[INFO][Process-${i}]`, "restart" );
+            }else{
+                logger( "INFO", `[INFO][Process-${i}]`, "restart" );
+            }
         }
     }
 }
 
 function main_exit() {
-    processes.forEach( e => {
-        e.send( [ "exit" ] );
-    } )
-    logger( "INFO", `[INFO][Process-Main]`, `total: ${total.total}, fail: ${total.fail}, success: ${total.success}` );
-    Object.keys( codeList ).forEach( e => {
-        if ( e != "null" ) {
-            logger( "INFO", `[INFO][Process-Main]`, `${e}: ${codeList[e]}` );
-        }
-    } )
-
     let t = new Date().getTime() - startTime;
     logger( "INFO", `[INFO][Process-Main]`, `${t/1000/60} min` );
     process.exit( 0 );

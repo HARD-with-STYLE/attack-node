@@ -13,6 +13,12 @@ const funs = {
     string: (len) => {
         return random(len);
     },
+    base64: (str) => {
+        return Buffer.from(str).toString('base64');
+    },
+    time: () => {
+        return new Date().getTime();
+    },
     custom: (str,len) => {
         return random(len, {specials: str, numbers: false, letters: false});
     }

@@ -50,7 +50,7 @@ const request = ( options, cb , s) => {
         port: port,
         path: path,
         method: method,
-        agent: keepalive,
+        //agent: keepalive,
         setHost: false,
         headers: {
             referer: options.referer,
@@ -99,7 +99,7 @@ const request_proxy = ( options, cb ,s) => {
         port: proxy.port,
         path: url,
         method: method,
-        agent: keepaliveAgent,
+        //agent: keepaliveAgent,
         setHost: false,
         headers: {
             referer: options.referer,

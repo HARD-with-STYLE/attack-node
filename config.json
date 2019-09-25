@@ -1,9 +1,9 @@
 {
     "global":{
-        "processNumber": 12,
-        "thread": 20,
-        "delay": 10,
-        "maxMemory": 50,
+        "processNumber": 48,
+        "thread": 50,
+        "delay": 1,
+        "maxMemory": 20,
         "time": -1,
         "status": true,
         "log": {
@@ -17,10 +17,10 @@
         }
     },
     "stream": [{
-        "url": "http://1.1.1.1/",
+        "url": "https://ia.51.la/go1?id=20352783",
         "check": "",
         "method": "GET",
-        "referer": "",
+        "referer": "https://w.nyan.kim",
         "data": ""
     }]
 }
